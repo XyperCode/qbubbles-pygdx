@@ -1,0 +1,44 @@
+import jython.JythonTask
+
+plugins {
+    id 'java'
+    id 'java-library'
+    id("com.github.rzabini.gradle-jython") version "1.1.0"
+}
+
+group = 'io.github.xypercode'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://jitpack.io/"
+    }
+}
+
+afterEvaluate {
+    tasks.register('testJython', JythonTask) {
+        script file('src/main/python/main.py')
+        classpath = sourceSets.main.compileClasspath
+        jvmArgs "-Dpython.import.site=false"
+        environment(["python.classpath": classpath.files.join(File.pathSeparator)])
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation api("org.python:jython:2.7.3")
+
+    // LibGDX
+    implementation "com.badlogicgames.gdx:gdx:1.12.1"
+
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.1"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-desktop"
+
+    implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
